@@ -20,7 +20,7 @@ class Kenaikan_gaji extends CI_Model
 
     public function getAllData()
     {
-        $this->datatables->select('j.id, k.nama_karyawan, j.persentase, j.jumlah_kenaikan, j.total_gaji');
+        $this->datatables->select('j.id, k.nama_karyawan, j.persentase, j.jumlah_kenaikan, j.total_gaji, j.total_gaji');
         $this->datatables->from('kenaikan_gaji j');
         $this->datatables->join('karyawan k', 'k.id_karyawan = j.id_karyawan', 'left');
         return $this->datatables->generate();

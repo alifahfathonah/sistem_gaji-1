@@ -12,7 +12,7 @@ class Gaji_bulanan extends CI_Model
 {
     public function getAllData()
     {
-        $this->datatables->select('b.id, k.nama_karyawan, b.tanggal, tj.nama as nama_golongan, k.gaji_pokok, j.nama_jabatan, b.uang_transport,b.tunjangan_kinerja,b.tunjangan_jabatan,b.uang_extra_kurikuler,b.uang_lembur,b.bonus_lain, b.total_gaji,b.total_potongan');
+        $this->datatables->select('b.id, k.nama_karyawan, b.tanggal, tj.nama as nama_golongan, k.gaji_pokok, j.nama_jabatan, b.uang_transport,b.tunjangan_kinerja,b.tunjangan_jabatan,b.uang_extra_kurikuler,b.uang_lembur,b.bonus_lain, b.total_gaji,b.total_potongan,b.total_potongan');
         $this->datatables->from('gaji_bulanan b');
         $this->datatables->join('karyawan k', 'k.id_karyawan = b.id_karyawan', 'left');
         $this->datatables->join('golongan g', 'g.id = k.id_golongan', 'left');

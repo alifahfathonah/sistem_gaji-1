@@ -37,7 +37,7 @@ class Karyawan extends CI_Model
         g.level,
         k.gaji_pokok,
         k.total_gaji,
-        k.create_date');
+        k.create_date, k.create_date');
         $this->datatables->from('karyawan k');
         $this->datatables->join('golongan g', 'g.id = k.id_golongan', 'left');
         $this->datatables->join('jabatan j', 'j.id = k.id_jabatan', 'left');

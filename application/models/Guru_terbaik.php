@@ -28,7 +28,7 @@ class Guru_terbaik extends CI_Model
 
     public function getAllData()
     {
-        $this->datatables->select('gt.id , gt.tanggal, k.nama_karyawan, gt.upload_portofolio, gt.keterangan, gt.jumlah_bonus');
+        $this->datatables->select('gt.id , gt.tanggal, k.nama_karyawan, gt.upload_portofolio, gt.keterangan, gt.jumlah_bonus, gt.jumlah_bonus');
         $this->datatables->from('guru_terbaik gt');
         $this->datatables->join('karyawan k', 'k.id_karyawan = gt.id_karyawan', 'left');
         return $this->datatables->generate();
