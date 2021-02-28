@@ -12,7 +12,7 @@ class Bonus_kinerja extends CI_Model
 {
     public function getAllData()
     {
-        $this->datatables->select('b.id,b.tanggal, k.nama_karyawan, j.nama_jabatan, b.nilai_kpi, b.jumlah_bonus, b.jumlah_bonus');
+        $this->datatables->select('b.id,b.tanggal, k.nama_karyawan, j.nama_jabatan, b.nilai_kpi, b.jumlah_bonus, b.jumlah_bonus, b.approve_yayasan');
         $this->datatables->from('bonus_kinerja b');
         $this->datatables->join('karyawan k', 'k.id_karyawan = b.id_karyawan', 'left');
         $this->datatables->join('golongan g', 'g.id = k.id_golongan', 'left');
@@ -79,6 +79,11 @@ class Bonus_kinerja extends CI_Model
     {
         $this->db->where('id', $id);
         $this->db->delete('bonus_kinerja');
+    }
+
+    public function approve($id)
+    {
+        return $this->db->query('update bonus_kinerja set approve_yayasan = 1 where id ="' . $id . '"');
     }
 }
 

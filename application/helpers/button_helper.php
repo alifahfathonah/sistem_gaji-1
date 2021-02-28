@@ -25,14 +25,22 @@ function get_btn_group2($btn_edit, $btn_delete, $btn_gbr)
 
 function btn_uploadGbr($btn_edit)
 {
-    $li_btn_gbr    = '<button class="badge bg-blue" title="Upload/Update Gambar" onClick=' . $btn_edit . '><li class="fa fa-upload"></li></button>';
+    $li_btn_gbr    = '<button class="badge bg-blue" title="Upload/Update Gambar" onClick=' . $btn_edit . '><li class="fa fa-upload" ></li></button>';
     return '<div class="text-center">' . $li_btn_gbr . '</div>';
 }
 
 function get_btn_export($btn_edit)
 {
-    $li_btn_edit    = '<button class="btn btn-sm btn-info" title="Cetak" onClick=' . $btn_edit . '><li class="fa fa-print"></li></button>';
+    $li_btn_edit    = '<button class="btn btn-sm btn-info badge" title="Cetak" onClick=' . $btn_edit . '><li class="fa fa-print" style="font-size:12px"></li></button>';
     return '<div class="text-center">' . $li_btn_edit . '</div>';
+}
+
+function btn_approve($btn_terima)
+{
+    $terima    = '<button class="btn btn-sm btn-warning badge" title="Terima Konfirmasi" onClick=' . $btn_terima . '><li class="fa fa-check" style="font-size:12px"></li> Approve </button>';
+    // $tolak    = '<button class="btn btn-sm btn-danger badge" title="Terima Konfirmasi" onClick=' . $btn_tolak . '><li class="fa fa-close" style="font-size:12px"></li></button>';
+
+    return '<div class="text-center">' . $terima  . '</div>';
 }
 
 function get_btn_verifikasi1($btn_edit, $btn_delete)

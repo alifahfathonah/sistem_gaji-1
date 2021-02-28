@@ -78,7 +78,8 @@ class Administrator extends CI_Controller
                 foreach ($dt['data'] as $row) {
                     $id   = $row->id;
                     $th1  = '<div style="font-size:12px;">' . ++$start . '</div>';
-                    $th2  = get_btn_group1('ubah("' . $id . '")', $this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'hapus("' . $id . '")' :  'pesan()') . (get_btn_export($this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'print("' . $id . '")' : 'pesan()'));
+                    $th2  = '<div style="width:70px">' . get_btn_group1('ubah("' . $id . '")', (($this->session->userdata('role') == 'administrator') || ($this->session->userdata('role') == 'keuangan' && ($row->approve_yayasan == 1)) || ($this->session->userdata('role') == 'yayasan')) ? 'hapus("' . $id . '")' : 'pesan()') .  (($this->session->userdata('role') == 'yayasan') ? get_btn_export('print("' . $id . '")') : (get_btn_export($row->approve_yayasan == 0 ? 'pesan()' : 'print("' . $id . '")'))) . '</div>';
+                    $th3 =  '<div style="font-size:13px;">' . ((($this->session->userdata('role') == 'yayasan') && ($row->approve_yayasan == 0)) ? btn_approve('approve("' . $id . '")') : ($row->approve_yayasan == 0 ? '<div class="badge btn-warning" style="color:red"><li class="fa fa-close"></li> Belum diapprove</div>' : '<div class="badge bg-green" style="color:white"><li class="fa fa-arrow-right"></li> Telah diapprove</div>')) . '</div>';
                     $th4  = '<div style="font-size:12px;">' . $row->nama_karyawan . '</div>';
                     $th5  = '<div style="font-size:12px;">' . tgl_indo($row->tanggal) . '</div>';
                     $th6  = '<div style="font-size:12px;">' . $row->nama_golongan . '</div>';
@@ -93,7 +94,7 @@ class Administrator extends CI_Controller
                     $th15 = '<div style="font-size:12px;">' . rupiah_format($row->total_potongan) . '</div>';
                     $th16 = '<div style="font-size:12px;">' . rupiah_format($row->total_gaji) . '</div>';
 
-                    $data[] = gathered_data(array($th1, $th2, $th4, $th5, $th6, $th7, $th8, $th9, $th10, $th11, $th12, $th13, $th14, $th15, $th16));
+                    $data[] = gathered_data(array($th1, $th2, $th3, $th4, $th5, $th6, $th7, $th8, $th9, $th10, $th11, $th12, $th13, $th14, $th15, $th16));
                 }
                 $dt['data'] = $data;
                 echo json_encode($dt);
@@ -181,8 +182,12 @@ class Administrator extends CI_Controller
                 die;
             } else if ($param == 'delete') {
                 $this->Gaji_bulanan->delete($id);
-                // $this->B_user_log_model->addLog(userLog('Hapus Data', $this->session->userdata('first_name') . ' ' . $this->session->userdata('last_name') . ' menghapus 1 data pada data pelanggan', $this->session->userdata('id')));
                 $result = array('status' => 'success', 'msg' => 'Data berhasil dihapus !');
+                echo json_encode(array('result' => $result));
+                die;
+            } else if ($param == 'approve') {
+                $this->Gaji_bulanan->approve($id);
+                $result = array('status' => 'success', 'msg' => 'Telah diapprove !');
                 echo json_encode(array('result' => $result));
                 die;
             }
@@ -215,14 +220,17 @@ class Administrator extends CI_Controller
                 foreach ($dt['data'] as $row) {
                     $id  = $row->id;
                     $th1 = '<div style="font-size:12px;">' . ++$start . '</div>';
-                    $th2 = get_btn_group1('ubah("' . $id . '")', $this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'hapus("' . $id . '")' : 'pesan()');
-                    $th3 = '<div style="font-size:12px;">' . $row->nama_karyawan . '</div>';
-                    $th4 = '<div style="font-size:12px;">' . $row->nama_jabatan . '</div>';
-                    $th5 = '<div style="font-size:12px;">' . tgl_indo($row->tanggal)  . '</div>';
-                    $th6 = '<div style="font-size:12px;">' . ($row->nilai_kpi) . ' % </div>';
-                    $th7 = '<div style="font-size:12px;">' . rupiah_format($row->jumlah_bonus) . '</div>';
+                    $th2  = '<div style="width:70px">' . get_btn_group1('ubah("' . $id . '")', (($this->session->userdata('role') == 'administrator') || ($this->session->userdata('role') == 'keuangan' && ($row->approve_yayasan == 1)) || ($this->session->userdata('role') == 'yayasan')) ? 'hapus("' . $id . '")' : 'pesan()') .  (($this->session->userdata('role') == 'yayasan') ? get_btn_export('print("' . $id . '")') : (get_btn_export($row->approve_yayasan == 0 ? 'pesan()' : 'print("' . $id . '")'))) . '</div>';
+                    $th3 =  '<div style="font-size:13px;">' . ((($this->session->userdata('role') == 'yayasan') && ($row->approve_yayasan == 0)) ? btn_approve('approve("' . $id . '")') : ($row->approve_yayasan == 0 ? '<div class="badge btn-warning" style="color:red"><li class="fa fa-close"></li> Belum diapprove</div>' : '<div class="badge bg-green" style="color:white"><li class="fa fa-arrow-right"></li> Telah diapprove</div>')) . '</div>';
+                    $th4 = '<div style="font-size:12px;">' . $row->nama_karyawan . '</div>';
+                    $th5 = '<div style="font-size:12px;">' . $row->nama_jabatan . '</div>';
+                    $th6 = '<div style="font-size:12px;">' . tgl_indo($row->tanggal)  . '</div>';
+                    $th7 = '<div style="font-size:12px;">' . ($row->nilai_kpi) . ' % </div>';
+                    $th8 = '<div style="font-size:12px;">' . rupiah_format($row->jumlah_bonus) . '</div>';
 
-                    $data[] = gathered_data(array($th1, $th2, $th3, $th4, $th5, $th6, $th7));
+                    get_btn_group1('ubah("' . $id . '")', $this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'hapus("' . $id . '")' : 'pesan()');
+
+                    $data[] = gathered_data(array($th1, $th2, $th3, $th4, $th5, $th6, $th7, $th8));
                 }
                 $dt['data'] = $data;
                 echo json_encode($dt);
@@ -296,6 +304,11 @@ class Administrator extends CI_Controller
                 $result = array('status' => 'success', 'msg' => 'Data berhasil dihapus !');
                 echo json_encode(array('result' => $result));
                 die;
+            } else if ($param == 'approve') {
+                $this->Bonus_kinerja->approve($id);
+                $result = array('status' => 'success', 'msg' => 'Telah diapprove !');
+                echo json_encode(array('result' => $result));
+                die;
             }
             $this->load->view('index', $view);
         }
@@ -326,12 +339,13 @@ class Administrator extends CI_Controller
                 foreach ($dt['data'] as $row) {
                     $id  = $row->id;
                     $th1 = '<div style="font-size:12px;">' . ++$start . '</div>';
-                    $th2 = get_btn_group1('ubah("' . $id . '")', $this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'hapus("' . $id . '")' : 'pesan()') . get_btn_export($this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'print("' . $id . '")' : 'pesan()');
-                    $th3 = '<div style="font-size:12px;">' . $row->nama_karyawan . '</div>';
-                    $th4 = '<div style="font-size:12px;">' . $row->nama_jabatan . '</div>';
-                    $th5 = '<div style="font-size:12px;">' . tgl_indo($row->tanggal) . '</div>';
-                    $th6 = '<div style="font-size:12px;">' . rupiah_format($row->total_gaji_bonus) . '</div>';
-                    $data[]    = gathered_data(array($th1, $th2, $th3, $th4, $th5, $th6));
+                    $th2  = '<div style="width:70px">' . get_btn_group1('ubah("' . $id . '")', (($this->session->userdata('role') == 'administrator') || ($this->session->userdata('role') == 'keuangan' && ($row->approve_yayasan == 1)) || ($this->session->userdata('role') == 'yayasan')) ? 'hapus("' . $id . '")' : 'pesan()') .  (($this->session->userdata('role') == 'yayasan') ? get_btn_export('print("' . $id . '")') : (get_btn_export($row->approve_yayasan == 0 ? 'pesan()' : 'print("' . $id . '")'))) . '</div>';
+                    $th3 =  '<div style="font-size:13px;">' . ((($this->session->userdata('role') == 'yayasan') && ($row->approve_yayasan == 0)) ? btn_approve('approve("' . $id . '")') : ($row->approve_yayasan == 0 ? '<div class="badge btn-warning" style="color:red"><li class="fa fa-close"></li> Belum diapprove</div>' : '<div class="badge bg-green" style="color:white"><li class="fa fa-arrow-right"></li> Telah diapprove</div>')) . '</div>';
+                    $th4 = '<div style="font-size:12px;">' . $row->nama_karyawan . '</div>';
+                    $th5 = '<div style="font-size:12px;">' . $row->nama_jabatan . '</div>';
+                    $th6 = '<div style="font-size:12px;">' . tgl_indo($row->tanggal) . '</div>';
+                    $th7 = '<div style="font-size:12px;">' . rupiah_format($row->total_gaji_bonus) . '</div>';
+                    $data[]    = gathered_data(array($th1, $th2, $th3, $th4, $th5, $th6, $th7));
                 }
                 $dt['data'] = $data;
                 echo json_encode($dt);
@@ -393,6 +407,11 @@ class Administrator extends CI_Controller
                 $result = array('status' => 'success', 'msg' => 'Data berhasil dihapus !');
                 echo json_encode(array('result' => $result));
                 die;
+            } else if ($param == 'approve') {
+                $this->Bonus_lebaran->approve($id);
+                $result = array('status' => 'success', 'msg' => 'Telah diapprove !');
+                echo json_encode(array('result' => $result));
+                die;
             }
             $this->load->view('index', $view);
         }
@@ -423,13 +442,15 @@ class Administrator extends CI_Controller
                 foreach ($dt['data'] as $row) {
                     $id  = $row->id;
                     $th1 = '<div style="font-size:12px;">' . ++$start . '</div>';
-                    $th2 = get_btn_group2('ubah("' . $id . '")', $this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'hapus("' . $id . '")' : 'pesan()', 'ubahGbr("' . $id . '")') . get_btn_export($this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'print("' . $id . '")' : 'pesan()');
-                    $th3 = '<div style="font-size:12px;">' . $row->nama_karyawan . '</div>';
-                    $th4 = '<div style="font-size:12px;">' . tgl_indo($row->tanggal) . '</div>';
-                    $th5 = empty($row->upload_portofolio) ? btn_uploadGbr('ubahGbr("' . $id . '")') . '<br> <div class="text-center"><small style="color:blue;" >Silahkan Upload dokumen !</small></div>' : '<div style="font-size:12px;"><img src="../gambar/' . $row->upload_portofolio . '" width="100px" height=""></div>';
-                    $th6 = '<div style="font-size:12px;">' . $row->keterangan . '</div>';
-                    $th7 = '<div style="font-size:12px;">' . rupiah_format($row->jumlah_bonus) . '</div>';
-                    $data[]    = gathered_data(array($th1, $th2, $th3, $th4, $th5, $th6, $th7));
+                    // $th2 = get_btn_group2('ubah("' . $id . '")', $this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'hapus("' . $id . '")' : 'pesan()', 'ubahGbr("' . $id . '")') . get_btn_export($this->session->userdata('role') == 'administrator' || $this->session->userdata('role') == 'yayasan' ? 'print("' . $id . '")' : 'pesan()');
+                    $th2  = '<div style="width:70px">' . get_btn_group2('ubah("' . $id . '")', (($this->session->userdata('role') == 'administrator') || ($this->session->userdata('role') == 'keuangan' && ($row->approve_yayasan == 1)) || ($this->session->userdata('role') == 'yayasan')) ? 'hapus("' . $id . '")' : 'pesan()', 'ubahGbr("' . $id . '")') .  (($this->session->userdata('role') == 'yayasan') ? get_btn_export('print("' . $id . '")') : (get_btn_export($row->approve_yayasan == 0 ? 'pesan()' : 'print("' . $id . '")'))) . '</div>';
+                    $th3 =  '<div style="font-size:13px;">' . ((($this->session->userdata('role') == 'yayasan') && ($row->approve_yayasan == 0)) ? btn_approve('approve("' . $id . '")') : ($row->approve_yayasan == 0 ? '<div class="badge btn-warning" style="color:red"><li class="fa fa-close"></li> Belum diapprove</div>' : '<div class="badge bg-green" style="color:white"><li class="fa fa-arrow-right"></li> Telah diapprove</div>')) . '</div>';
+                    $th4 = '<div style="font-size:12px;">' . $row->nama_karyawan . '</div>';
+                    $th5 = '<div style="font-size:12px;">' . tgl_indo($row->tanggal) . '</div>';
+                    $th6 = empty($row->upload_portofolio) ? btn_uploadGbr('ubahGbr("' . $id . '")') . '<br> <div class="text-center"><small style="color:blue;" >Silahkan Upload dokumen !</small></div>' : '<div style="font-size:12px;"><img src="../gambar/' . $row->upload_portofolio . '" width="100px" height=""></div>';
+                    $th7 = '<div style="font-size:12px;">' . $row->keterangan . '</div>';
+                    $th8 = '<div style="font-size:12px;">' . rupiah_format($row->jumlah_bonus) . '</div>';
+                    $data[]    = gathered_data(array($th1, $th2, $th3, $th4, $th5, $th6, $th7, $th8));
                 }
                 $dt['data'] = $data;
                 echo json_encode($dt);
@@ -543,6 +564,11 @@ class Administrator extends CI_Controller
             } else if ($param == 'delete') {
                 $this->Guru_terbaik->delete($id);
                 $result = array('status' => 'success', 'msg' => 'Data berhasil dihapus !');
+                echo json_encode(array('result' => $result));
+                die;
+            } else if ($param == 'approve') {
+                $this->Guru_terbaik->approve($id);
+                $result = array('status' => 'success', 'msg' => 'Telah diapprove !');
                 echo json_encode(array('result' => $result));
                 die;
             }

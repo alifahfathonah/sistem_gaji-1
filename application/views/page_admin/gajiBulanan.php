@@ -125,6 +125,41 @@
             });
     }
 
+    function approve(id) {
+        swal({
+                title: "Apakah Yakin Akan Menerima?",
+                type: "warning",
+                showCancelButton: true,
+                showLoaderOnConfirm: true,
+                confirmButtonText: "Ya",
+                closeOnConfirm: false
+            },
+            function() {
+                $.ajax({
+                    url: "<?php echo site_url('administrator/gaji_bulanan/approve'); ?>/" + id,
+                    type: "POST",
+                    dataType: "JSON",
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>'
+                    },
+                    success: function(resp) {
+                        data = resp.result;
+                        updateAllTable();
+                        return swal({
+                            html: true,
+                            timer: 1300,
+                            showConfirmButton: false,
+                            title: data['msg'],
+                            type: data['status']
+                        });
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert('Error Deleting Data');
+                    }
+                });
+            });
+    }
+
     function pesan() {
         alert('Sorry, you can not use this feature, You are not allowed to access it !');
     }
@@ -210,12 +245,12 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="card-box table-responsive">
-
                             <table id="data" class="table table-striped table-bordered" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th style="font-size: 10px;">No</th>
                                         <th style="font-size: 10px;">Tools</th>
+                                        <th style="font-size: 10px;">Status Konfirmasi</th>
                                         <th style="font-size: 10px;">Nama Karyawan</th>
                                         <th style="font-size: 10px;">Tanggal Gaji</th>
                                         <th style="font-size: 10px;">Nama Golongan</th>

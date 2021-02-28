@@ -87,7 +87,6 @@
     }
 
 
-
     function hapus(id) {
         swal({
                 title: "Apakah Yakin Akan Dihapus?",
@@ -123,6 +122,40 @@
             });
     }
 
+    function approve(id) {
+        swal({
+                title: "Apakah Yakin Akan Menerima?",
+                type: "warning",
+                showCancelButton: true,
+                showLoaderOnConfirm: true,
+                confirmButtonText: "Ya",
+                closeOnConfirm: false
+            },
+            function() {
+                $.ajax({
+                    url: "<?php echo site_url('administrator/bonusLebaran/approve'); ?>/" + id,
+                    type: "POST",
+                    dataType: "JSON",
+                    data: {
+                        '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>'
+                    },
+                    success: function(resp) {
+                        data = resp.result;
+                        updateAllTable();
+                        return swal({
+                            html: true,
+                            timer: 1300,
+                            showConfirmButton: false,
+                            title: data['msg'],
+                            type: data['status']
+                        });
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert('Error Deleting Data');
+                    }
+                });
+            });
+    }
 
     function simpan() {
         var token_name = '<?php echo $this->security->get_csrf_token_name(); ?>'
@@ -210,6 +243,7 @@
                                     <tr>
                                         <th style="font-size: 10px;">No</th>
                                         <th style="font-size: 10px;">Tools</th>
+                                        <th style="font-size: 10px;">Status Konfirmasi</th>
                                         <th style="font-size: 10px;">Nama Karyawan</th>
                                         <th style="font-size: 10px;">Nama Jabatan</th>
                                         <th style="font-size: 10px;">Tanggal Bonus</th>

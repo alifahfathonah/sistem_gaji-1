@@ -28,7 +28,7 @@ class Guru_terbaik extends CI_Model
 
     public function getAllData()
     {
-        $this->datatables->select('gt.id , gt.tanggal, k.nama_karyawan, gt.upload_portofolio, gt.keterangan, gt.jumlah_bonus, gt.jumlah_bonus');
+        $this->datatables->select('gt.id , gt.tanggal, k.nama_karyawan, gt.upload_portofolio, gt.keterangan, gt.jumlah_bonus, gt.jumlah_bonus, gt.approve_yayasan');
         $this->datatables->from('guru_terbaik gt');
         $this->datatables->join('karyawan k', 'k.id_karyawan = gt.id_karyawan', 'left');
         return $this->datatables->generate();
@@ -97,6 +97,11 @@ class Guru_terbaik extends CI_Model
         // $this->_deleteImage($id);
         $this->db->where('id', $id);
         $this->db->delete('guru_terbaik');
+    }
+
+    public function approve($id)
+    {
+        return $this->db->query('update guru_terbaik set approve_yayasan = 1 where id ="' . $id . '"');
     }
 }
 

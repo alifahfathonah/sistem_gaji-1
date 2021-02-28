@@ -11,7 +11,7 @@ class Bonus_lebaran extends CI_Model
 {
     public function getAllData()
     {
-        $this->datatables->select('b.id,b.tanggal, k.nama_karyawan, j.nama_jabatan, b.total_gaji_bonus,b.total_gaji_bonus');
+        $this->datatables->select('b.id,b.tanggal, k.nama_karyawan, j.nama_jabatan, b.total_gaji_bonus,b.total_gaji_bonus, b.approve_yayasan');
         $this->datatables->from('bonus_lebaran b');
         $this->datatables->join('karyawan k', 'k.id_karyawan = b.id_karyawan', 'left');
         $this->datatables->join('golongan g', 'g.id = k.id_golongan', 'left');
@@ -67,6 +67,11 @@ class Bonus_lebaran extends CI_Model
     {
         $this->db->where('id', $id);
         $this->db->delete('bonus_lebaran');
+    }
+
+    public function approve($id)
+    {
+        return $this->db->query('update bonus_lebaran set approve_yayasan = 1 where id ="' . $id . '"');
     }
 }
 
